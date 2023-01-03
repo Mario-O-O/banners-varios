@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Resaltado</title>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+* { box-sizing: border-box; }
+
+body {
+  color: #333;
+  font-family: 'Roboto', sans-serif;
+  font-size: 22px;
+  margin: 0 auto;
+  max-width: 1110px;
+}
+
+.slider {
+  background: #eeeeee;
+  position: relative;
+  width: 100%;
+  height: 300px;
+}
+
+.cont_sliders {
+  background: #dddddd;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 420px;
+  display: flex;
+  align-items: center;
+}
+
+.slides {
+  display: flex;
+  flex: 1;
+  position: relative;
+  top: 0;
+  left: 0;
+  /* transition: left .2s ease-out; */
+}
+
+.slides.shifting {
+  transition: left .2s ease-out;
+}
+
+.slide {
+  width: auto;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 1s;
+  position: relative;
+  background: #FFCF47;
+  border: 1px solid #ff8a47;
+  flex-wrap: wrap;
+
+  text-align: center;
+}
+
+.control {
+  position: absolute;
+  top: 60%;
+  width: 50px;
+  height: 50px;
+  background: #fff;
+  border-radius: 50px;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  display: flex;
+}
+
+.prev,
+.next {
+  background-size: 22px;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.prev {
+  background-image: url(https://cdn0.iconfinder.com/data/icons/navigation-set-arrows-part-one/32/ChevronLeft-512.png);
+  left: 20px;
+}
+
+.next {
+  background-image: url(https://cdn0.iconfinder.com/data/icons/navigation-set-arrows-part-one/32/ChevronRight-512.png);
+  right: 20px;
+}
+
+.prev:active,
+.next:active {
+  transform: scale(.8);
+}
+
+.slide.active{
+  background-color: tomato;
+  z-index: 2;
+  transform: scale(1.3);
+}
+</style>
+</head>
+<body>
+  <div id="slider" class="slider">
+  <div class="cont_sliders">
+    <div id="slides" class="slides">
+      <div class="slide">
+        Slide 1
+      </div>
+      <div class="slide">
+        Slide 2
+      </div>
+      <div class="slide">
+        Slide 3
+      </div>
+ 
+    </div>
+  </div>
+  <a id="prev" class="control prev"></a>
+  <a id="next" class="control next"></a>
+</div>
+</body>
+
+<script>
+const d = document, w = window;
+
+function slideResaltado(contAll, contSliders, slide, numresaltado) {
+  const $slider = d.getElementById(contAll),
+  $sliderItems = d.getElementById(contSliders),
+  $prev = d.getElementById('prev'),
+  $next = d.getElementById('next');
+
+  let anchoSliders,numeSlide,
+  $slideSolo = d.querySelectorAll(slide);
+
+function anchoSlide(num) {
+    anchoSliders = $slider.offsetWidth;
+    numeSlide = num; //numero de slides en pantalla
+    $slideSolo.forEach(el => { el.style.width = anchoSliders / numeSlide + 'px'; }); 
+  }
+
+  (function() {
+    let breakPoint = w.matchMedia("(min-width: 720px)");
+    const responsive = (e) => { (e.matches) ? anchoSlide(3) : anchoSlide(1); }
+    breakPoint.addListener(responsive);
+    responsive(breakPoint);
+  }());
+
+  let slidesLength = $slideSolo.length,
+  slideSize = $slideSolo[0].offsetWidth,
+  lastSlide = $slideSolo[slidesLength - 1],
+  cloneLast = lastSlide.cloneNode(true);
+
+  // $sliderItems.style.left = `0px`;
+  $sliderItems.style.left = `-${slideSize * slidesLength}px`;
+  let n = slidesLength + 1;
+  // let p = 6;
+
+  function cloneSlides() { for (let i = 0; i < slidesLength; i++) { allSlide = $slideSolo[i]; cloneAllSlide = allSlide.cloneNode(true); $sliderItems.insertAdjacentElement("beforeend", cloneAllSlide); } }
+  cloneSlides();
+  cloneSlides();
+
+  $slideAll = d.querySelectorAll(slide);
+  $slideAll[n].classList.add("active");
+
+  function moveSlide(menoMas, numMasMenos, numComparar) {
+    $sliderItems.classList.add('shifting');
+      $slideSolo = d.querySelectorAll(slide);
+      
+      slideMove = menoMas;
+      $sliderItems.style.left = `${slideMove}px`;
+
+      $slideAll.forEach((el) => { el.classList.remove("active"); });
+      numMasMenos
+      if (n === numComparar) { n = slidesLength + 1; }
+      $slideAll[n].classList.add("active");
+  
+      if ($sliderItems.style.left === "0px" || $sliderItems.style.left === `-${slideSize * slidesLength}px` || $sliderItems.style.left === `-${slideSize * (slidesLength * 2)}px`) {
+        $slideSolo = d.querySelectorAll(slide);
+        n = slidesLength + 1;
+        $slideAll[n].classList.add("active");
+        setTimeout(() => {
+          $sliderItems.style.left = `-${slideSize * slidesLength}px`;
+          $sliderItems.classList.remove('shifting');
+        }, 500);
+      }
+  }
+
+  d.addEventListener("click", function(e) {
+    if (e.target === $next) { moveSlide(parseInt($sliderItems.style.left, 10) - $slideSolo[slidesLength - 1].offsetWidth,  n++, 12) }
+    if (e.target === $prev) { moveSlide(parseInt($sliderItems.style.left, 10) + $slideSolo[slidesLength - 1].offsetWidth,  n--, 0) }
+  });
+  
+  d.addEventListener("transitionend", function(e){ $sliderItems.classList.remove('shifting'); });
+}
+
+slideResaltado("slider", "slides", ".slide");
+w.addEventListener("resize", (e) => {slideResaltado("slider", "slides", ".slide",);});
+</script>
+</html>

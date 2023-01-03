@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<style>
+
+.cont_miniSlides {
+  position: relative;
+  margin-top: 45px;
+  max-width: 420px;
+}
+
+.miniSlides {
+  min-height: 132px;
+}
+
+.miniSlide {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateX(100px);
+  transition: all 0.5s;
+  z-index: initial;
+}
+
+.miniSlide.activeMiniSlide {
+  opacity: 1;
+  transform: translateX(0);
+  z-index: 1;
+}
+
+.miniSlide p {
+  line-height: normal;
+  margin-top: 10px;
+}
+
+.contDots .dot{
+  margin-bottom: 15px;
+}
+
+.slider_btn {
+  display: flex;
+}
+
+.slider_btn{
+  opacity: 0;
+  transition: all 0.4s;
+}
+
+.cont_miniSlides:hover .slider_btn{
+  opacity: 1;
+}
+
+.dot {
+  cursor: pointer;
+  height: 10px;
+  width: 10px;
+  background: #818181;
+  border-radius: 45px;
+  transition: all 0.5s;
+}
+
+.dot.activedot{
+  width: 30px;
+  background-color: #121212;
+}
+
+.pauseBtn:nth-child(2) {
+  margin: 0 10px;
+}
+
+.dot {
+  margin: 0 5px;
+}
+
+.dot:last-child {
+ margin-right: 0;
+}
+
+.dot:first-child {
+ margin-left: 0;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #757575;
+  margin-top: 39px;
+  padding-top: 10px;
+}
+
+.prev, .next, .pauseBtn{
+  position: relative;
+  cursor: pointer;
+  height: 30px;
+  width: 30px;
+  background: rgb(255 255 255 / 50%);
+  border-radius: 60px;
+  box-shadow: 0px 5px 11px 0px rgb(0 0 0 / 15%);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9e9e9e;
+  transition: all 0.4s;
+}
+
+.pauseIco::after{
+  content: '\275A\275A';
+}
+
+.playIco::after{
+  content: '';
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 7.5px 0 7.5px 10px;
+  border-color: transparent transparent transparent #9e9e9e;
+  position: absolute;
+  top: 7px;
+  left: 11px;
+  transition: all 0.4s;
+}
+
+.prev::after, .next::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 10px;
+  width: 10px;
+  transform: rotate(45deg);
+  top: 10px;
+  left: 13px;
+  border-bottom: 3px solid #9e9e9e;
+  border-left: 3px solid #9e9e9e;
+}
+
+.next::after {
+  left: initial;
+  right: 13px;
+  border-bottom: 0px solid #9e9e9e;
+  border-left: 0px solid #9e9e9e;
+  border-top: 3px solid #9e9e9e;
+  border-right: 3px solid #9e9e9e;
+}
+
+.prev:hover::after, .next:hover::after{
+  border-color: #ffffff;
+}
+
+.prev:hover, .next:hover, .pauseBtn:hover, .playIco:hover::after{
+  background: #E1111C;
+  box-shadow: 0px 5px 11px 0px rgb(225 17 28 / 20%);
+  color: #ffffff;
+  border-color: transparent transparent transparent #ffffff;
+}
+
+</style>
+
+<body>
+  
+  <div class="cont_miniSlides">
+    <div class="miniSlides">
+
+        <div class="miniSlide activeMiniSlide">
+          video_1
+        </div>
+
+        <div class="miniSlide">
+          video_2
+        </div>
+
+        <div class="miniSlide">
+          video_3
+        </div>
+
+        <div class="miniSlide">
+          video_4
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <div class="contDots">
+        <div class="dot activedot">titulo_video</div>
+        <div class="dot">titulo_video</div>
+        <div class="dot">titulo_video</div>
+        <div class="dot">titulo_video</div>
+        </div>
+
+        <div class="slider_btn">
+        <div id="prev_slider" class="prev"></div>
+        <div id="play_pause" class="pauseBtn pauseIco"></div>
+        <div id="next_slider" class="next"></div>
+        </div>
+    </div>
+    </div>
+
+<script>
+
+// SLIDER
+function slide() {
+
+let $nextBtn = document.querySelector(".slider_btn .next"),
+    $prevBtn = document.querySelector(".slider_btn .prev"),
+    $slides = document.querySelectorAll(".miniSlide"),
+    dot = document.querySelectorAll('.dot');
+
+let i = 0,
+    btnPuse = document.querySelector(".pauseBtn"),
+    onOffSlide = false;
+
+function stopInterval() {$nextBtn.click();}
+let myTimer = setInterval(stopInterval, 6000);
+
+const playSlide = function() {
+  myTimer = setInterval(stopInterval, 6000);
+  // btnPuse.innerHTML = '&#10074;&#10074;';
+  btnPuse.classList.add('pauseIco');
+  btnPuse.classList.remove('playIco');
+  onOffSlide = false;
+}
+
+const pausaSlide = function() {
+  clearInterval(myTimer);
+  // btnPuse.innerHTML = '&#8227;';
+  btnPuse.classList.add('playIco');
+  btnPuse.classList.remove('pauseIco');
+  onOffSlide = true;
+}
+
+document.addEventListener("click", function(e) {
+    
+    if (e.target === $prevBtn) {
+        e.preventDefault();
+        dot.forEach((el, i) => { $slides[i].classList.remove("activeMiniSlide"); dot[i].classList.remove("activedot"); });
+        i--;
+        if (i < 0) {
+            i = $slides.length - 1;
+        }
+        $slides[i].classList.add("activeMiniSlide");
+        dot[i].classList.add("activedot");
+    }
+    
+    if (e.target === $nextBtn) {
+
+        e.preventDefault();
+        dot.forEach((el, i) => { $slides[i].classList.remove("activeMiniSlide"); dot[i].classList.remove("activedot"); });
+
+        i++;
+        if (i >= $slides.length) {
+            i = 0;
+        }
+        $slides[i].classList.add("activeMiniSlide");
+        dot[i].classList.add("activedot");
+    }
+    
+    for (let index = 0; index < dot.length; index++) {   
+      if (e.target === dot[index]) {
+        dot.forEach((el, i) => { $slides[i].classList.remove("activeMiniSlide"); dot[i].classList.remove("activedot"); });
+
+        $slides[index].classList.add("activeMiniSlide");
+        dot[index].classList.add("activedot");
+
+        i = index;
+      }
+    }
+
+    if (e.target === btnPuse) { (onOffSlide === false) ? pausaSlide() : playSlide(); } 
+
+  });
+
+}
+// End SLIDER
+
+
+slide();
+
+</script>
+
+</body>
+</html>

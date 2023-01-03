@@ -1,0 +1,25 @@
+  
+  d.addEventListener("click", function(e) {
+    if (e.target === $prev) {
+      $sliderItems.classList.add('shifting');
+      $slideSolo = d.querySelectorAll(slide);
+      
+      slideMove = parseInt($sliderItems.style.left, 10) + $slideSolo[slidesLength - 1].offsetWidth;
+      $sliderItems.style.left = `${slideMove}px`;
+
+      $slideAll.forEach((el) => { el.classList.remove("active"); });
+      n--
+      if (n === 0) { n = slidesLength + 1; }
+      $slideAll[n].classList.add("active");
+
+      if ($sliderItems.style.left === "0px" || $sliderItems.style.left === `-${slideSize * slidesLength}px` || $sliderItems.style.left === `-${slideSize * (slidesLength * 2)}px`) {
+        $slideSolo = d.querySelectorAll(slide);
+        n = slidesLength + 1;
+        $slideAll[n].classList.add("active");
+        setTimeout(() => {
+          $sliderItems.style.left = `-${slideSize * slidesLength}px`;
+          $sliderItems.classList.remove('shifting');
+        }, 500);
+      }
+    }
+  });
